@@ -1,5 +1,6 @@
 import scrapy
 from urllib.parse import urlparse
+from twisted.internet import reactor
 
 
 class MySpider(scrapy.Spider):
@@ -30,7 +31,7 @@ class MyPipeline(object):
 
 
 def main(start_urls, allowed_domains=None):
-    from scrapy.crawler import CrawlerProcess
+    from scrapy.crawler import CrawlerProcess, CrawlerRunner
 
     if allowed_domains is None:
         netlocs = [urlparse(i).netloc for i in start_urls]
@@ -39,14 +40,15 @@ def main(start_urls, allowed_domains=None):
 
     MyPipeline.results = set()
 
-    process = CrawlerProcess({
+    process = CrawlerRunner({
         'USER_AGENT': 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)',
-        'ITEM_PIPELINES': {'__main__.MyPipeline': 1},
-        'LOG_ENABLED': False
+        'ITEM_PIPELINES': {__name__ + '.MyPipeline': 1},
+        'LOG_ENABLED': True
     })
 
-    process.crawl(MySpider, start_urls=start_urls, allowed_domains=allowed_domains)
-    process.start()
+    d = process.crawl(MySpider, start_urls=start_urls, allowed_domains=allowed_domains)
+    d.addBoth(lambda _: reactor.stop())
+    reactor.run(installSignalHandlers=0)
 
     # [print(i)for i in MyPipeline.results]
     # print(len(MyPipeline.results))
