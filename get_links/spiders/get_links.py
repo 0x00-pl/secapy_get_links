@@ -32,11 +32,16 @@ class MyPipeline(object):
 
 def main(start_urls, allowed_domains=None):
     from scrapy.crawler import CrawlerProcess, CrawlerRunner
+    if type(start_urls) != list:
+        start_urls = [start_urls]
 
     if allowed_domains is None:
         netlocs = [urlparse(i).netloc for i in start_urls]
         netlocs = set(netlocs)
         allowed_domains = list(netlocs)
+
+    if type(allowed_domains) != list:
+        allowed_domains = [allowed_domains]
 
     MyPipeline.results = set()
 
@@ -52,6 +57,15 @@ def main(start_urls, allowed_domains=None):
 
     # [print(i)for i in MyPipeline.results]
     # print(len(MyPipeline.results))
+    return list(MyPipeline.results)
+
+
+def main_with_process(start_urls, allowed_domains=None):
+    from multiprocessing import Process
+
+    p = Process(target=main, args=[start_urls, allowed_domains])
+    p.start()
+    p.join()
     return list(MyPipeline.results)
 
 
