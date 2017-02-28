@@ -48,7 +48,7 @@ def main(start_urls, allowed_domains=None, cb=None):
     process = CrawlerRunner({
         'USER_AGENT': 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)',
         'ITEM_PIPELINES': {__name__ + '.MyPipeline': 1},
-        'LOG_ENABLED': True
+        'LOG_ENABLED': False
     })
 
     d = process.crawl(MySpider, start_urls=start_urls, allowed_domains=allowed_domains)
