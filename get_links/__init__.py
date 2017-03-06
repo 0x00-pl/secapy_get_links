@@ -1,4 +1,4 @@
-from get_links.spiders import spider_depth
+from .spiders import spider_depth
 from .spiders import get_links
 
 
