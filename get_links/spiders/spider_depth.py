@@ -31,7 +31,7 @@ class MySpider(scrapy.Spider):
         try:
             hxs = scrapy.Selector(response)
             # extract all links from page
-            all_links = hxs.xpath('*//a/@href').extract()
+            all_links = hxs.xpath('*//@href').extract()
             all_links = set(all_links)
         except Exception:
             return
